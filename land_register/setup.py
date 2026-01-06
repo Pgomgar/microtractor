@@ -27,7 +27,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'land_register = land_register.land_register_gui:main'
+            'land_register_plot = land_register.land_register_plot_gui:main',
+            'land_register_map = land_register.land_register_map_gui:main'
         ],
     },
 )
