@@ -7,7 +7,11 @@ from ament_index_python.packages import get_package_share_directory
 import os
 
 def generate_launch_description():
-    bias_file_path = "/home/pgomgar/Desktop/rtk_ws/src/sensors_node/config/mpu9250_bias_2026-02-14.yaml"
+
+    pkg_path = os.path.join(get_package_share_directory("sensors_node"))
+    bias_file_path = os.path.join(pkg_path, "config", "mpu9250_bias_2026-02-14.yaml")
+    
+    #"/home/pgomgar/Desktop/rtk_ws/src/sensors_node/config/mpu9250_bias_2026-02-14.yaml"
     
     bias_file_path_arg = DeclareLaunchArgument(
         "bias_file_path",

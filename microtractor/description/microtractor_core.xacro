@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="track.xacro"/>
+
+    <xacro:property name="microtractor_width" value="0.15"/>
+    <xacro:property name="microtractor_heigh" value="0.2"/>
+    <xacro:property name="microtractor_length" value="0.5"/>
+    
+
+    <link name="base_link"/>
+
+    <joint name="chassis_joint" type="fixed">
+        <origin xyz="-0.2 0.0 0.0"/>
+        <parent link="base_link"/>
+        <child link="chassis_link"/>
+    </joint>
+
+    <link name="chassis_link">
+        <visual>
+        <origin xyz="${microtractor_length/2} 0.0 ${microtractor_heigh/2}"/>
+        <!--origin xyz="0.0 0.0 0.0"/-->
+            <geometry>
+                <box size="${microtractor_length} ${microtractor_width} ${microtractor_heigh}"/>
+            </geometry>
+            <material name="white"/>
+        </visual>
+    </link>
+    <xacro:triangular_track preffix="right" x="0.0" y="${track_width+0.01}" z="-${attack_pinion_center-microtractor_heigh/2}" side="${right}"/>
+    <xacro:triangular_track preffix="left" x="0.0" y="-${track_width+0.01}" z="-${attack_pinion_center-microtractor_heigh/2}" side="${left}"/>
+</robot>

@@ -1,0 +1,62 @@
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="colours.xacro"/>
+
+    <xacro:property name="attack_pinion_radius" value="0.095" />
+    <xacro:property name="attack_pinion_center" value="0.18" />
+    <xacro:property name="auxiliar_pinion_radius" value="0.07" />
+    <xacro:property name="pinion_width" value="0.05" />
+    <xacro:property name="auxiliar_pinion_center" value="0.085" />
+
+    <xacro:property name="track_hight" value="0.3" />
+    <xacro:property name="track_lenght" value="0.45" />
+    <xacro:property name="track_width" value="0.145"/>
+
+    <xacro:property name="right" value="1.0" />
+    <xacro:property name="left" value="-1.0" />
+
+    <xacro:macro name="pinion" params="name preffix side x y radius pinion_center">
+
+        <joint name="${preffix}_${name}_joint" type="continuous">
+            <origin xyz="${x} ${y * side} ${pinion_center}" rpy="${-side * pi/2} 0.0 0.0"/>
+            <parent link="${preffix}_track_link"/>
+            <child link="${preffix}_${name}_link"/>
+            <axis xyz="0.0 0.0 1.0"/>
+        </joint>
+
+        <link name="${preffix}_${name}_link">
+            <visual>
+                <geometry>
+                    <cylinder radius="${radius}" length="${pinion_width}"/>
+                </geometry>
+                <material name="green"/>
+            </visual>
+        </link>
+    </xacro:macro>
+
+    <xacro:macro name="triangular_track" params="preffix side x y z">
+
+        <!-- Link de la oruga -->
+
+        <joint name="${preffix}_track_joint" type="fixed">
+            <origin xyz="${x} ${y} ${z}"/>
+            <parent link="base_link"/>
+            <child link="${preffix}_track_link"/>
+            <axis xyz="0.0 0.0 ${-side}"/>
+        </joint>
+
+        <link name="${preffix}_track_link">
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 -${pi * ((1+side)/2)}"/> <!--Si el side es left, el resultado será 0, por lo que no girará-->
+                <geometry>
+                    <mesh filename="package://microtractor/meshes/track.stl" scale="0.01 0.01 0.01"/>
+                </geometry>
+                <material name="blue"/>
+            </visual>
+        </link>
+        
+        <xacro:pinion name="attack_pinion" preffix="${preffix}" side="${side}" x="0.0" y="0.0" radius="${attack_pinion_radius}" pinion_center="${attack_pinion_center}"/>
+        <xacro:pinion name="auxiliar_pinion_back" preffix="${preffix}"  side="${side}" x="${-(track_lenght/2 - auxiliar_pinion_radius)}"  y="0.0" radius="${auxiliar_pinion_radius}" pinion_center="${auxiliar_pinion_center}"/>
+        <xacro:pinion name="auxiliar_pinion_front" preffix="${preffix}" side="${side}" x="${track_lenght/2 - auxiliar_pinion_radius}"  y="0.0" radius="${auxiliar_pinion_radius}" pinion_center="${auxiliar_pinion_center}"/>
+    </xacro:macro>
+
+</robot>
