@@ -7,26 +7,49 @@ from ament_index_python.packages import get_package_share_directory
 import os
 
 def generate_launch_description():
+    combined_rtk_pkg = os.path.join(
+        get_package_share_directory("combined_rtk"),
+        "combined_nodes.launch.py"
+    )
 
-    pkg_path = os.path.join(get_package_share_directory("microtractor_localization"))
-    ekf_file_path = os.path.join(pkg_path, "config", "ekf_navsat_transform.yaml")
+    combined_rtk_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(combined_rtk_pkg)
+    )
 
-    ekf_node = Node(package="robot_localization",
-                    executable="ekf_node",
-                    name="ekf_filter_node",
-                    output="screen",
-                    parameters=[ekf_file_path])
-    
-    navsat_trans_node = Node(package="robot_localization",
-                            executable="navsat_transform_node", 
-                            name="navsat_transform",
-                            output="screen",
-                            parameters=[ekf_file_path],
-                            remappings=[("imu/data", "imu/data"),
-                                        ("gps/fix", "ublox_gps_node/fix"),
-                                        ("odometry/filtered", "odometry/filtered")])
-    
+    imu_pkg = os.path.join(
+        get_package_share_directory("sensors_node"), 
+        "launch",
+        "imu_mpu9250.launch.py"
+    )
+
+    imu_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(imu_pkg)
+    )
+
+    microtractor_description_pkg = os.path.join(
+        get_package_share_directory("microtractor"), 
+        "launch",
+        "microtractor_description.launch.py"
+    )
+
+    microtractor_description_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(microtractor_description_pkg)
+    )
+
+    localization_pkg = os.path.join(
+        get_package_share_directory("microtractor_localization"), 
+        "launch",
+        "localization.launch.py"
+    )
+
+    localization_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(localization_pkg)
+    )
+
     return LaunchDescription([
-        ekf_node,
-        navsat_trans_node
+        microtractor_description_launch,
+        combined_rtk_launch,
+        imu_launch,
+        localization_launch
     ])
+

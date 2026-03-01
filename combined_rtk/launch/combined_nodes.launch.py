@@ -11,7 +11,7 @@ def generate_launch_description():
         parameters=[{
             'debug': 0,                       # Debug level (0 = none)
             'device': '/dev/ttyACM0',  # Serial port where GPS is connected
-            'frame_id': 'gps',                # Frame ID to tag published GPS messages
+            'frame_id': 'gps_link',                # Frame ID to tag published GPS messages
             'uart1': {
                 'baudrate': 9600              # Baudrate for UART1
             },

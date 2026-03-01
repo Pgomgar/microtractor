@@ -12,6 +12,10 @@
   <depend>robot_localization</depend>
   <depend>rclcpp</depend>
   <depend>sensor_msgs</depend>
+  <exec_depend>combined_rtk</exec_depend>
+  <exec_depend>sensors_node</exec_depend>
+  <exec_depend>microtractor</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

@@ -16,7 +16,7 @@
 
     <xacro:macro name="pinion" params="name preffix side x y radius pinion_center">
 
-        <joint name="${preffix}_${name}_joint" type="continuous">
+        <joint name="${preffix}_${name}_joint" type="fixed">
             <origin xyz="${x} ${y * side} ${pinion_center}" rpy="${-side * pi/2} 0.0 0.0"/>
             <parent link="${preffix}_track_link"/>
             <child link="${preffix}_${name}_link"/>

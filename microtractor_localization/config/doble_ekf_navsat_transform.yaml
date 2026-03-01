@@ -1,4 +1,28 @@
-ekf_filter_node:
+ekf_local_node:
+  ros__parameters:
+    frequency: 30.0
+    sensor_timeout: 0.1
+    two_d_mode: true # El robot solo se moverá en terreno llano
+
+    map_frame: map              # Defaults to "map" if unspecified
+    odom_frame: odom            # Defaults to "odom" if unspecified
+    base_link_frame: base_link  # Defaults to "base_link" if unspecified
+    world_frame: odom           # Defaults to the value of odom_frame if unspecified
+    
+    publish_tf: true
+
+    imu0: imu/data
+    imu0_config: [false, false, false,
+                  false,  false,  true, # yaw
+                  false, false, false,
+                  false,  false,  false, # velocidad en yaw
+                  false,  false,  false]
+    imu0_differential: false 
+    imu0_relative: false
+    imu0_queue_size: 10
+    imu0_remove_gravitational_acceleration: true
+
+ekf_global_node:
   ros__parameters:
     frequency: 30.0
     sensor_timeout: 0.1
@@ -25,8 +49,8 @@ ekf_filter_node:
     imu0_config: [false, false, false,
                   false,  false,  true, # yaw
                   false, false, false,
-                  false,  false,  true, # velocidad en yaw
-                  true,  false,  false]
+                  false,  false,  false, # velocidad en yaw
+                  false,  false,  false]
     imu0_differential: false 
     imu0_relative: false
     imu0_queue_size: 10

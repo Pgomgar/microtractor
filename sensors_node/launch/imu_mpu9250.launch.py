@@ -9,7 +9,7 @@ import os
 def generate_launch_description():
 
     pkg_path = os.path.join(get_package_share_directory("sensors_node"))
-    bias_file_path = os.path.join(pkg_path, "config", "mpu9250_bias_2026-02-14.yaml")
+    bias_file_path = os.path.join(pkg_path, "config", "mpu9250_bias_LTS.yaml")
     
     #"/home/pgomgar/Desktop/rtk_ws/src/sensors_node/config/mpu9250_bias_2026-02-14.yaml"
     
