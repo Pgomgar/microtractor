@@ -10,20 +10,22 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'debug': 0,                       # Debug level (0 = none)
+            'config_on_startup': False,
             'device': '/dev/ttyACM0',  # Serial port where GPS is connected
             'frame_id': 'gps_link',                # Frame ID to tag published GPS messages
             'uart1': {
-                'baudrate': 9600              # Baudrate for UART1
+                'baudrate': 115200              # Baudrate for UART1
             },
-            'tmode3': 1,                      # Survey-in mode (TMODE3 = 1)
-            'sv_in': {                        # Survey-in configuration
-                'reset': True,                # Reset survey-in every startup
-                'min_dur': 300,               # Minimum duration for survey-in (seconds)
-                'acc_lim': 3.0                # Accuracy limit for survey-in (meters)
-            },
-            'inf': {
-                'all': True                   # Enable all INF messages on console
-            },
+            #'rate': 5.0, # Para que funcione a 5Hz
+            #'tmode3': 0,                      # Survey-in mode (TMODE3 = 1) Esto solo es para cuando sea base 0 es ROVER
+            #'sv_in': {                        # Survey-in configuration
+            #    'reset': True,                # Reset survey-in every startup
+            #    'min_dur': 300,               # Minimum duration for survey-in (seconds)
+            #    'acc_lim': 3.0                # Accuracy limit for survey-in (meters)
+            #},
+            #'inf': {
+            #    'all': True                   # Enable all INF messages on console
+            #},
             'publish': {
                 'all': True,                  # Publish all available messages
                 'aid': {
@@ -49,7 +51,7 @@ def generate_launch_description():
         parameters=[{
             'host': '192.148.213.42',  # NTRIP caster hostname
             'port': 2101,                            # NTRIP port (integer)
-            'mountpoint': 'VRS3',               # Mountpoint on the NTRIP caster
+            'mountpoint': 'VRS3M',               # Mountpoint on the NTRIP caster
             'ntrip_version': 'None',                 # Optional NTRIP version
             'authenticate': True,                    # Use authentication (username/password)
             'username': 'pgomeg',           # Auth username

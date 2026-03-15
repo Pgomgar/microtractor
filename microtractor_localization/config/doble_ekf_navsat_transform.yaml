@@ -1,7 +1,7 @@
 ekf_local_node:
   ros__parameters:
-    frequency: 30.0
-    sensor_timeout: 0.1
+    frequency: 20.0
+    sensor_timeout: 0.25
     two_d_mode: true # El robot solo se moverá en terreno llano
 
     map_frame: map              # Defaults to "map" if unspecified
@@ -24,8 +24,8 @@ ekf_local_node:
 
 ekf_global_node:
   ros__parameters:
-    frequency: 30.0
-    sensor_timeout: 0.1
+    frequency: 20.0
+    sensor_timeout: 0.25
     two_d_mode: true # El robot solo se moverá en terreno llano
 
     map_frame: map              # Defaults to "map" if unspecified
@@ -58,10 +58,10 @@ ekf_global_node:
 
 navsat_transform:
   ros__parameters:
-    frequency: 30.0
-    delay: 3.0
+    frequency: 5.0
+    delay: 10.0
 
-    magnetic_declination_radians: 0.02443461  # Para Villamalea (1º 4')
+    magnetic_declination_radians: 0.0 #0.02443461  # Para Villamalea (1º 4')
     yaw_offset: 1.570796327  # IMU reads 0 facing magnetic north, not east
     
     zero_altitude: true
