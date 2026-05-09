@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="microtractor">
+    <ros2_control name="MicrotractorHardwareInterface" type="system">
+        
+        <hardware>
+            <plugin><!--Nombre_HW_I--></plugin>
+        </hardware>
+
+        <joint name="right_attack_pinion_joint">
+            <command_interface name="velocity"/>
+        </joint>
+
+        <joint name="left_attack_pinion_joint">
+            <command_interface name="velocity"/>
+        </joint>
+    </ros2_control>
+</robot>
