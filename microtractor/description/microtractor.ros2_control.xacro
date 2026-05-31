@@ -4,7 +4,7 @@
     <ros2_control name="MicrotractorHardwareInterface" type="system">
         
         <hardware>
-            <plugin><!--Nombre_HW_I--></plugin>
+            <plugin>microtractor_control/MicrotractorSystemHardware</plugin>
         </hardware>
 
         <joint name="right_attack_pinion_joint">

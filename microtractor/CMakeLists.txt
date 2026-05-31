@@ -8,6 +8,48 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(xacro REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(hardware_interface REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(controller_manager REQUIRED)
+
+include_directories(
+  hardware/include
+)
+
+add_library(${PROJECT_NAME}
+  SHARED
+  hardware/src/microtractor_system.cpp
+)
+
+ament_target_dependencies(${PROJECT_NAME}
+  rclcpp
+  std_msgs
+  hardware_interface
+  pluginlib
+)
+
+pluginlib_export_plugin_description_file(hardware_interface microtractor_control.xml)
+
+install(
+  TARGETS ${PROJECT_NAME}
+  EXPORT export_${PROJECT_NAME}
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+install(
+  DIRECTORY hardware/include/
+  DESTINATION include
+)
+
+install(
+  FILES microtractor_control.xml
+  DESTINATION share/${PROJECT_NAME}
+)
+
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -27,5 +69,6 @@ install(DIRECTORY
   launch
   DESTINATION share/${PROJECT_NAME}
 )
+
 
 ament_package()
