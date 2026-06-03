@@ -15,7 +15,7 @@
 
 #include "std_msgs/msg/float32.hpp"
 
-#define MAX_VEL 1.0
+#define MAX_VEL 11.11 //rad/s
 
 using namespace microtractor_control;
 
@@ -46,10 +46,14 @@ std::vector<hardware_interface::CommandInterface> MicrotractorSystemHardware::ex
         if(info_.joints[i].name == "right_attack_pinion_joint"){
             command_interfaces.emplace_back(hardware_interface::CommandInterface(
                 info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &cmd_vel_DER));
+            RCLCPP_INFO(rclcpp::get_logger("MicrotractorSystemHardware"),
+                   "DER OKEY");
         }
         else if(info_.joints[i].name == "left_attack_pinion_joint"){
             command_interfaces.emplace_back(hardware_interface::CommandInterface(
                             info_.joints[i].name, hardware_interface::HW_IF_VELOCITY, &cmd_vel_IZQ));
+            RCLCPP_INFO(rclcpp::get_logger("MicrotractorSystemHardware"),
+                   "IZQ OKEY");
         }
     }
 
@@ -75,12 +79,15 @@ hardware_interface::return_type MicrotractorSystemHardware::read(
 hardware_interface::return_type MicrotractorSystemHardware::write(
     const rclcpp::Time & time, const rclcpp::Duration & period){
         auto msg_IZQ = std_msgs::msg::Float32();
-        msg_IZQ.data = cmd_vel_IZQ / MAX_VEL;
+        msg_IZQ.data = static_cast<float>(cmd_vel_IZQ / MAX_VEL);
         pub_vel_IZQ->publish(msg_IZQ);
 
         auto msg_DER = std_msgs::msg::Float32();
-        msg_DER.data = cmd_vel_DER / MAX_VEL;
+        msg_DER.data = static_cast<float>(cmd_vel_DER / MAX_VEL);
         pub_vel_DER->publish(msg_DER);
+
+        //RCLCPP_INFO(rclcpp::get_logger("MicrotractorSystemHardware"),
+          //         "'%f' <- DER, '%f' <- IZQ", cmd_vel_DER, cmd_vel_IZQ);
 
         return hardware_interface::return_type::OK;
     }

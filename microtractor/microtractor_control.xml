@@ -1,4 +1,4 @@
-<library path="microtractor_control">
+<library path="microtractor">
     <class name="microtractor_control/MicrotractorSystemHardware"
             type="microtractor_control::MicrotractorSystemHardware"
             base_class_type="hardware_interface::SystemInterface">

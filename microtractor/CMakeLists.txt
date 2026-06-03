@@ -64,6 +64,7 @@ if(BUILD_TESTING)
 endif()
 
 install(DIRECTORY
+  config
   meshes
   description
   launch

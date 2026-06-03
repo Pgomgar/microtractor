@@ -29,7 +29,7 @@ def generate_launch_description():
             "R_PWM": LaunchConfiguration("IZQ_R_PWM"),
             "frequency": LaunchConfiguration("frequency")
         }],
-        remappings=[("/cmd_vel/motor_relative", "/cmd_vel/motor_relative/IZQ")]
+        remappings=[("/cmd_vel/motor_relative", "/cmd_vel/PWM/IZQ")]
     )
     
     der_motor_driver_node = Node(package="motor_drivers",
@@ -43,7 +43,7 @@ def generate_launch_description():
             "R_PWM": LaunchConfiguration("DER_R_PWM"),
             "frequency": LaunchConfiguration("frequency")
         }],
-        remappings=[("/cmd_vel/motor_relative", "/cmd_vel/motor_relative/DER")]
+        remappings=[("/cmd_vel/motor_relative", "/cmd_vel/PWM/DER")]
     )
 
     return LaunchDescription([
