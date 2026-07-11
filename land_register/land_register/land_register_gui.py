@@ -1,9 +1,12 @@
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QListWidget, QHBoxLayout, QVBoxLayout, QWidget, QLabel, QComboBox, QDialog, QFileDialog, QMessageBox
+from PyQt6.QtWidgets import QTabWidget, QApplication, QMainWindow, QPushButton, QListWidget, QHBoxLayout, QVBoxLayout, QWidget, QLabel, QComboBox, QDialog, QFileDialog, QMessageBox
 from PyQt6.QtGui import QAction
+from PyQt6.QtWebEngineWidgets import QWebEngineView
 import pyqtgraph as pg
 
 import sys
-import yaml
+#import yaml
+import io
+import folium
 
 import rclpy
 from rclpy.node import Node
@@ -73,10 +76,22 @@ class MainWindow(QMainWindow):
 
         # Mapa
 
+        self.map_web_engine = QWebEngineView()
+        self.map_web_engine.setMinimumSize(400, 400)
+
+        # Mapa como Gráfico
+
         self.map_plot = pg.PlotWidget()
         self.map_ploting = self.map_plot.plot([], [], pen=None, symbol="o", symbol_size=10)
         self.map_plot.setLabel("left", "Latitude")
         self.map_plot.setLabel("bottom", "Longitude")
+
+        # Pestañas
+
+        self.map_tab = QTabWidget()
+        self.map_tab.addTab(self.map_web_engine, "Mapa")
+        self.map_tab.addTab(self.map_plot, "Gráfico")
+
 
         # Acciones del menú
 
@@ -104,7 +119,7 @@ class MainWindow(QMainWindow):
         list_layaout.addWidget(self.gps_list)
 
         central_layaout.addLayout(list_layaout)
-        central_layaout.addWidget(self.map_plot)
+        central_layaout.addWidget(self.map_tab)
 
         end_layaout.addWidget(self.save_button)
 
@@ -135,10 +150,13 @@ class MainWindow(QMainWindow):
         self.save_file_dialog()
 
     def clear_button_callback(self):
+        refence_point = puntos[0]
+        
         puntos.clear()
         self.gps_list.clear()
-        self.map_ploting.setData([], [])
         self.buttons_enabled()
+        self.map_ploting.setData([], [])
+        self.update_map(ref_point=refence_point)
     
     def add_button_callback(self):
         rclpy.spin_once(self.node_gps_sub, timeout_sec=30.0)
@@ -150,9 +168,9 @@ class MainWindow(QMainWindow):
             for k in punto.keys():
                 punto_str = f"{punto_str}{k}: {punto[k]:.8f}\n"
             self.gps_list.addItem(punto_str)
-        self.map_ploting.setData(long, lat)
+        self.map_ploting.setData(long, lat) # Reset
         self.buttons_enabled()
-        self.update_map_plot()
+        self.update_map()
 
     def remove_button_callback(self):
         item = self.gps_list.currentItem()
@@ -160,24 +178,56 @@ class MainWindow(QMainWindow):
         if item is not None:
             row = self.gps_list.row(item)
             self.gps_list.takeItem(row)
+            
+            if len(puntos) == 1:
+                ref_point = puntos[0]
+            else:
+                ref_point = None
 
             puntos.pop(row)
             self.buttons_enabled()
-            self.update_map_plot()
+            self.update_map(ref_point=ref_point)
     
-    def update_map_plot(self):
+    def update_map(self, ref_point=None):
+
+        if ref_point is None:
+            init_point = [puntos[0]["Latitude"], puntos[0]["Longitude"]]
+        else:
+            init_point = [ref_point["Latitude"], ref_point["Longitude"]]
+        
+        puntos_list = []
         lat = []
         long = []
-        for punto in puntos:
-            punto_str = ""
-            for k in punto.keys():
-                punto_str = f"{punto_str}{k}: {punto[k]:.8f}\n"
-                if k == "Latitude":
-                    lat.append(punto[k])
-                elif k == "Longitude":
-                    long.append(punto[k])
-        self.map_ploting.setData(long, lat)
+        data = io.BytesIO()
+        
+        map_folium = folium.Map(location=init_point, zoom_start=20, max_zoom=40)
 
+        for punto in puntos:
+            puntos_list.append([punto["Latitude"], punto["Longitude"]])
+            lat.append(punto["Latitude"])
+            long.append(punto["Longitude"])
+            folium.Circle(radius=0.1,
+                          color="Red",
+                          fill=True,
+                          fill_color="Red", 
+                          fill_opacity=0.5,
+                          location=puntos_list[-1], 
+                          popup=f"Punto número: {len(puntos_list)}").add_to(map_folium)
+            #folium.Marker(location=puntos_list[-1], popup=f"Punto número: {len(puntos_list)}").add_to(map_folium)
+
+        if len(puntos_list) > 1:
+            folium.Polygon(locations=puntos_list, 
+                        color="blue", 
+                        weight=2, 
+                        fill_color="blue", 
+                        fill_opacity=0.7, 
+                        fill=True, 
+                        popup="Area del terreno").add_to(map_folium)
+
+        map_folium.save(data, close_file=False)
+
+        self.map_ploting.setData(long, lat)
+        self.map_web_engine.setHtml(data.getvalue().decode())
     ##
     
     def buttons_enabled(self):
@@ -188,17 +238,29 @@ class MainWindow(QMainWindow):
             self.add_button.setEnabled(True)
             self.remove_button.setEnabled(True)
         
-        self.save_button.setEnabled(self.gps_list.count() >= 2)
+        self.save_button.setEnabled(self.gps_list.count() >= 4)
         self.clear_button.setEnabled(self.gps_list.count() > 0)
     
     def save_file_dialog(self):
-        ruta, _ = QFileDialog.getSaveFileName(self, "Guardar parcela", "nueva_parcela.yaml", "Archivos YAML (*.yaml);;Todos los archivos (*)")
+        import geopandas
+        from shapely.geometry import Polygon
+
+        #ruta, _ = QFileDialog.getSaveFileName(self, "Guardar parcela", "nueva_parcela.gml", "Archivos GML (*.gml);;Archivos XML (*.xml);;Todos los archivos (*)")
+        ruta, _ = QFileDialog.getSaveFileName(self, "Guardar parcela", "nueva_parcela.geojson", "Archivos GeoJSON (*.geojson);;Archivos JSON (*.json);;Todos los archivos (*)")
 
         if ruta:
             
             try:
                 with open(ruta, 'w') as file:
-                    yaml.dump(puntos, file, default_flow_style=False, allow_unicode=True)
+                    puntos_poly = []
+                    for punto in puntos:
+                        puntos_poly.append(punto.values())
+                    gdf  = geopandas.GeoDataFrame(index=[0], crs="EPSG:4326", geometry=[Polygon(puntos_poly)])
+                    gdf.geometry = gdf.geometry.force_2d()
+                    gdf["Name"] = ruta.split("/")[-1].split(".")[0]
+                    #yaml.dump(puntos, file, default_flow_style=False, allow_unicode=True)
+                    #gdf.to_file(ruta, driver="GML")
+                    gdf.to_file(ruta, driver="GeoJSON")
 
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Se ha producido un error al guardar: {e}")
