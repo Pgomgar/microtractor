@@ -1,3 +1,3 @@
-int32 distance # milimeters, up positive, down negative
+int32 distance # posición donde se quiere mover el actuador en milímetros
 ---
 bool success
