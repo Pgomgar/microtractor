@@ -27,8 +27,8 @@ class GPSSubscriber(Node):
     def subscription_callback(self, msg: NavSatFix):
         puntos.append(
             {
-                "Latitude": msg.latitude,
                 "Longitude": msg.longitude,
+                "Latitude": msg.latitude,
                 "Altitude": msg.altitude,
             }
         )
