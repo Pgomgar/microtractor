@@ -14,6 +14,10 @@ find_package(hardware_interface REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(controller_manager REQUIRED)
 
+find_package(microtractor_localization REQUIRED)
+find_package(joy REQUIRED)
+find_package(teleop_twist_joy REQUIRED)
+
 include_directories(
   hardware/include
 )

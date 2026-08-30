@@ -47,7 +47,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        microtractor_description_launch,
+        #microtractor_description_launch, # Comentado para evitar conflictos con el bringup
         combined_rtk_launch,
         imu_launch,
         localization_launch

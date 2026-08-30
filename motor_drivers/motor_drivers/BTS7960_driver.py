@@ -30,20 +30,20 @@ class BTS7960_Driver(Node):
         #vel debe ser entre 0 y 1
         
         if vel < 0.0:
-            self.get_logger().info(f"Moviendo motor para atrás a velocidad {-1*vel}")
+            #self.get_logger().info(f"Moviendo motor para atrás a velocidad {-1*vel}")
             self.motor.backward(-1*vel)
 
         elif vel > 0.0:
 
             if vel > 1.0:
-                self.get_logger().info(f"Moviendo motor para delante a velocidad {vel}")
+                #self.get_logger().info(f"Moviendo motor para delante a velocidad {vel}")
                 self.motor.forward(1.0)
             else:
-                self.get_logger().info(f"Moviendo motor para delante a velocidad {vel}")
+                #self.get_logger().info(f"Moviendo motor para delante a velocidad {vel}")
                 self.motor.forward(vel)
 
         else: #vel == 0.0
-            self.get_logger().info(f"Parando motor")
+            #self.get_logger().info(f"Parando motor")
             self.motor.stop()
     
 def main(args=None):
