@@ -46,17 +46,10 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(motor_drivers_pkg)
     )
 
-    linear_actuator_service_node = Node(
-        package="linear_actuator_node",
-        executable="linear_actuator_service",
-        name="linear_actuator_service",
-        output="screen",
-        parameters=[{
-            "FORWARD_PIN":24,
-            "BACKWARD_PIN":25,
-            "MAX_DISTANCE": 100,
-            "VEL":3
-        }]
+    linear_actuator_joyteleop_pkg = os.path.join(
+        get_package_share_directory("linear_actuator_node"),
+        "launch",
+        "linear_actuator_joyteleop.launch.py"
     )
 
     teleop_joy_pkg = os.path.join(
@@ -72,11 +65,15 @@ def generate_launch_description():
         }.items()
     )
 
+    linear_actuator_joyteleop_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(linear_actuator_joyteleop_pkg)
+    )
+
     return LaunchDescription([
         use_sim_time_arg,
         microtractor_diff_controller_launch,
         #microtractor_localization_launch,
         motor_drivers_launch,
-        linear_actuator_service_node,
+        linear_actuator_joyteleop_launch,
         teleop_joy_launch,
     ])
