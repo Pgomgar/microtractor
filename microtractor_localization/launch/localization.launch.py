@@ -34,7 +34,7 @@ def generate_launch_description():
                             parameters=[ekf_file_path],
                             remappings=[("imu", "imu/data"),
                                         ("gps/fix", "ublox_gps_node/fix"),
-                                        ("odometry/filtered", "odometry/global")])
+                                        ("odometry/filtered", "odometry/local")])
     
     return LaunchDescription([
         ekf_local_node,
